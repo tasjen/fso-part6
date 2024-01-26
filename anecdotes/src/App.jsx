@@ -10,28 +10,30 @@ const App = () => {
     dispatch(vote(id));
   };
   const handleAdd = (event) => {
-    event.preventDefault()
-    const content = event.target.content.value
+    event.preventDefault();
+    const content = event.target.content.value;
     dispatch(add(content));
-    event.target.content.value = ''
-  }
+    event.target.content.value = '';
+  };
 
   return (
     <div>
       <h2>Anecdotes</h2>
-      {anecdotes.map((anecdote) => (
-        <div key={anecdote.id}>
-          <div>{anecdote.content}</div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote.id)}>vote</button>
+      {anecdotes
+        .sort((a, b) => b.votes - a.votes)
+        .map((anecdote) => (
+          <div key={anecdote.id}>
+            <div>{anecdote.content}</div>
+            <div>
+              has {anecdote.votes}
+              <button onClick={() => handleVote(anecdote.id)}>vote</button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
       <h2>create new</h2>
       <form onSubmit={handleAdd}>
         <div>
-          <input name="content"/>
+          <input name="content" />
         </div>
         <button>create</button>
       </form>
