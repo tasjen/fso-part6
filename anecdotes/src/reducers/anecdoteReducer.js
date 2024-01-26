@@ -24,6 +24,13 @@ export const vote = (id) => {
   };
 };
 
+export const add = (content) => {
+  return {
+    type: 'ADD',
+    payload: asObject(content),
+  };
+};
+
 const initialState = anecdotesAtStart.map(asObject);
 
 const reducer = (state = initialState, action) => {
@@ -36,6 +43,8 @@ const reducer = (state = initialState, action) => {
         ? anecdote
         : { ...anecdote, votes: anecdote.votes + 1 }
     );
+  } else if (action.type === 'ADD') {
+    return [...state, action.payload];
   }
 
   return state;
