@@ -4,6 +4,7 @@ import {
   showNotification,
   hideNotification,
 } from '../reducers/notificationReducer';
+import anecdoteService from '../services/anecdote';
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) =>
@@ -13,6 +14,11 @@ const AnecdoteList = () => {
 
   const handleVote = (id) => {
     dispatch(voteAnecdote(id));
+    const anecdoteToUpdate = anecdotes.find((e) => e.id === id);
+    anecdoteService.update({
+      ...anecdoteToUpdate,
+      votes: anecdoteToUpdate.votes + 1,
+    });
     dispatch(
       showNotification(
         `you voted '${anecdotes.find((e) => e.id === id).content}'`
