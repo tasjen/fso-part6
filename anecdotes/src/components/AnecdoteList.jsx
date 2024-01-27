@@ -4,7 +4,6 @@ import {
   showNotification,
   hideNotification,
 } from '../reducers/notificationReducer';
-import anecdoteService from '../services/anecdote';
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) =>
@@ -12,16 +11,11 @@ const AnecdoteList = () => {
   );
   const dispatch = useDispatch();
 
-  const handleVote = (id) => {
-    dispatch(voteAnecdote(id));
-    const anecdoteToUpdate = anecdotes.find((e) => e.id === id);
-    anecdoteService.update({
-      ...anecdoteToUpdate,
-      votes: anecdoteToUpdate.votes + 1,
-    });
+  const handleVote = (anecdoteObject) => {
+    dispatch(voteAnecdote(anecdoteObject));
     dispatch(
       showNotification(
-        `you voted '${anecdotes.find((e) => e.id === id).content}'`
+        `you voted '${anecdotes.find((e) => e.id === anecdoteObject.id).content}'`
       )
     );
     setTimeout(() => {
@@ -33,12 +27,12 @@ const AnecdoteList = () => {
     <>
       {anecdotes
         .sort((a, b) => b.votes - a.votes)
-        .map((anecdote) => (
-          <div key={anecdote.id}>
-            <div>{anecdote.content}</div>
+        .map((anecdoteObject) => (
+          <div key={anecdoteObject.id}>
+            <div>{anecdoteObject.content}</div>
             <div>
-              has {anecdote.votes}
-              <button onClick={() => handleVote(anecdote.id)}>vote</button>
+              has {anecdoteObject.votes}
+              <button onClick={() => handleVote(anecdoteObject)}>vote</button>
             </div>
           </div>
         ))}

@@ -1,36 +1,48 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-// const getId = () => (100000 * Math.random()).toFixed(0);
-
-// const asObject = (anecdote) => {
-//   return {
-//     content: anecdote,
-//     id: getId(),
-//     votes: 0,
-//   };
-// };
+import anecdoteService from '../services/anecdote';
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
   initialState: [],
   reducers: {
-    addAnecdote(state, { payload: anecdoteObject }) {
-      // const anecdoteObject = asObject(anecdote);
-      state.push(anecdoteObject);
-    },
-    voteAnecdote(state, { payload: id }) {
-      return state.map((anecdoteObject) =>
-        anecdoteObject.id !== id
-          ? anecdoteObject
-          : { ...anecdoteObject, votes: anecdoteObject.votes + 1 }
+    updateAnecdote(state, { payload: anecdoteObject }) {
+      return state.map((e) =>
+        e.id !== anecdoteObject.id ? e : anecdoteObject
       );
     },
-    fetchAllAnecdotes(_state, { payload: arrayOfAnecdoteObject }) {
+    setAnecdotes(_state, { payload: arrayOfAnecdoteObject }) {
       return arrayOfAnecdoteObject;
+    },
+    appendAnecdote(state, { payload: anecdoteObject }) {
+      state.push(anecdoteObject);
     },
   },
 });
 
-export const { addAnecdote, voteAnecdote, fetchAllAnecdotes } =
-  anecdoteSlice.actions;
+const { updateAnecdote, setAnecdotes, appendAnecdote } = anecdoteSlice.actions;
+
+export const fetchAllAnecdotes = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll();
+    dispatch(setAnecdotes(anecdotes));
+  };
+};
+export const addAnecdote = (anecdote) => {
+  return async (dispatch) => {
+    const anecdoteObject = await anecdoteService.createNew(anecdote);
+    dispatch(appendAnecdote(anecdoteObject));
+  };
+};
+
+export const voteAnecdote = (anecdoteObject) => {
+  return async (dispatch) => {
+    const anecdoteToUpdate = {
+      ...anecdoteObject,
+      votes: anecdoteObject.votes + 1,
+    }
+    await anecdoteService.update(anecdoteToUpdate);
+    dispatch(updateAnecdote(anecdoteToUpdate));
+  };
+};
+
 export default anecdoteSlice.reducer;

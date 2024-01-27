@@ -13,8 +13,8 @@ const createNew = async (anecdote) => {
   return res.data;
 };
 
-const update = (anecdoteObject) => {
-  axios.put(`${baseUrl}/anecdotes/${anecdoteObject.id}`, anecdoteObject);
+const update = async (anecdoteObject) => {
+  await axios.put(`${baseUrl}/anecdotes/${anecdoteObject.id}`, anecdoteObject);
 }
 
 export default { getAll, createNew, update };
