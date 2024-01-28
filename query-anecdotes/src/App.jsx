@@ -2,6 +2,8 @@ import AnecdoteForm from './components/AnecdoteForm';
 import Notification from './components/Notification';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import anecdotesService from './services/anecdotes';
+import NotificationContext from './context/NotificationContext';
+import { useContext } from 'react';
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -28,6 +30,7 @@ const App = () => {
       );
     },
   });
+  const { setNotification } = useContext(NotificationContext);
 
   if (anecdotesQuery.isLoading) {
     return <div>loading data...</div>;
@@ -45,6 +48,7 @@ const App = () => {
       ...anecdoteObject,
       votes: anecdoteObject.votes + 1,
     });
+    setNotification(`anecdote '${anecdoteObject.content}' voted`);
   };
 
   return (
