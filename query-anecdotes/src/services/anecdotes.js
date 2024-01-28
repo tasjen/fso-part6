@@ -2,7 +2,17 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:3001/anecdotes'
 
-export const getAll = async () => {
+const getAll = async () => {
   const res = await axios.get(baseUrl)
   return res.data
+}
+
+const create = async (anecdoteObject) => {
+  const res = await axios.post(baseUrl, anecdoteObject)
+  return res.data
+}
+
+export default {
+  getAll,
+  create
 }
