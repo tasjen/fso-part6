@@ -9,13 +9,23 @@ const App = () => {
     queryKey: ['anecdotes'],
     queryFn: anecdotesService.getAll,
     retry: false,
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: true,
   });
   const newAnecdoteMutation = useMutation({
     mutationFn: anecdotesService.create,
     onSuccess: (anecdoteObject) => {
       const anecdotes = queryClient.getQueryData(['anecdotes']);
       queryClient.setQueryData(['anecdotes'], [...anecdotes, anecdoteObject]);
+    },
+  });
+  const updateAnecdoteMutation = useMutation({
+    mutationFn: anecdotesService.update,
+    onSuccess: (anecdoteObject) => {
+      const anecdotes = queryClient.getQueryData(['anecdotes']);
+      queryClient.setQueryData(
+        ['anecdotes'],
+        anecdotes.map((e) => (e.id !== anecdoteObject.id ? e : anecdoteObject))
+      );
     },
   });
 
@@ -30,8 +40,11 @@ const App = () => {
   const addAnecdote = (anecdoteObject) => {
     newAnecdoteMutation.mutate(anecdoteObject);
   };
-  const handleVote = (anecdote) => {
-    console.log('vote');
+  const voteAnecdote = (anecdoteObject) => {
+    updateAnecdoteMutation.mutate({
+      ...anecdoteObject,
+      votes: anecdoteObject.votes + 1,
+    });
   };
 
   return (
@@ -46,7 +59,7 @@ const App = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote)}>vote</button>
+            <button onClick={() => voteAnecdote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
