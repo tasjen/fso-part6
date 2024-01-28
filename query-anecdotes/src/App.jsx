@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import anecdotesService from './services/anecdotes';
 import NotificationContext from './context/NotificationContext';
 import { useContext } from 'react';
+import { isAxiosError } from 'axios';
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -18,6 +19,13 @@ const App = () => {
     onSuccess: (anecdoteObject) => {
       const anecdotes = queryClient.getQueryData(['anecdotes']);
       queryClient.setQueryData(['anecdotes'], [...anecdotes, anecdoteObject]);
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        setNotification(error.response.data.error);
+      } else {
+        setNotification(error);
+      }
     },
   });
   const updateAnecdoteMutation = useMutation({
